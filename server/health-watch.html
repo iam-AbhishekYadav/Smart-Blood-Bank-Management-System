@@ -7,207 +7,47 @@
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #050805;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Share Tech Mono', monospace;
-    }
-
-    .watch-shell {
-      background: #0a0e0a;
-      border: 1.5px solid #1a2e1a;
-      border-radius: 20px;
-      padding: 2rem 2.5rem 1.75rem;
-      width: 100%;
-      max-width: 520px;
-      position: relative;
-    }
-
-    .brand-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .brand {
-      font-family: 'Orbitron', monospace;
-      font-size: 11px;
-      color: #2a4a2a;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-    }
-
-    .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-      border: 0.5px solid #1a3a1a;
-      color: #555;
-    }
-    .status-pill.alive  { color: #00e85a; border-color: #003a15; }
-    .status-pill.dead   { color: #e83030; border-color: #3a0000; }
-
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #333;
-      transition: all 0.3s;
-    }
-    .alive .dot  { background: #00e85a; box-shadow: 0 0 7px #00e85a; }
-    .dead .dot   { background: #e83030; }
-
-    .lcd-display {
-      background: #050d05;
-      border: 1px solid #0e1e0e;
-      border-radius: 10px;
-      padding: 1.5rem 1rem 1.25rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .lcd-display::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,60,0.012) 2px, rgba(0,255,60,0.012) 4px);
-      pointer-events: none;
-    }
-
-    /* ghost "8" segments behind digits */
-    .ghost {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
+    body { background: #050805; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Share Tech Mono', monospace; }
+    .watch-shell { background: #0a0e0a; border: 1.5px solid #1a2e1a; border-radius: 20px; padding: 2rem 2.5rem 1.75rem; width: 100%; max-width: 520px; }
+    .brand-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .brand { font-family: 'Orbitron', monospace; font-size: 11px; color: #2a4a2a; letter-spacing: 4px; text-transform: uppercase; }
+    .status-pill { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 11px; letter-spacing: 1px; transition: all 0.3s; border: 0.5px solid #1a3a1a; color: #555; }
+    .status-pill.alive { color: #00e85a; border-color: #003a15; }
+    .status-pill.dead  { color: #e83030; border-color: #3a0000; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #333; transition: all 0.3s; }
+    .alive .dot { background: #00e85a; box-shadow: 0 0 7px #00e85a; }
+    .dead .dot  { background: #e83030; }
+    .lcd-display { background: #050d05; border: 1px solid #0e1e0e; border-radius: 10px; padding: 1.5rem 1rem 1.25rem; text-align: center; position: relative; overflow: hidden; }
+    .lcd-display::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,60,0.012) 2px, rgba(0,255,60,0.012) 4px); pointer-events: none; }
+    .ghost { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
     .ghost-main { font-size: 58px; letter-spacing: 4px; color: #001a08; line-height: 1; }
     .ghost-ms   { font-size: 26px; letter-spacing: 3px; color: #001208; margin-top: 4px; }
-
-    .time-main {
-      font-size: 58px;
-      letter-spacing: 4px;
-      color: #00e85a;
-      line-height: 1;
-      text-shadow: 0 0 18px rgba(0,232,90,0.45);
-      position: relative;
-      z-index: 1;
-    }
-    .time-ms {
-      font-size: 26px;
-      color: #009938;
-      letter-spacing: 3px;
-      margin-top: 4px;
-      position: relative;
-      z-index: 1;
-    }
-    .date-row {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #1e5a2e;
-      letter-spacing: 3px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .divider { width: 60px; height: 0.5px; background: #0e2e0e; margin: 1.25rem auto; }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .metric {
-      background: #060d06;
-      border: 0.5px solid #0e1e0e;
-      border-radius: 8px;
-      padding: 8px 6px;
-      text-align: center;
-    }
+    .time-main { font-size: 58px; letter-spacing: 4px; color: #00e85a; line-height: 1; text-shadow: 0 0 18px rgba(0,232,90,0.45); position: relative; z-index: 1; }
+    .time-ms   { font-size: 26px; color: #009938; letter-spacing: 3px; margin-top: 4px; position: relative; z-index: 1; }
+    .date-row  { margin-top: 10px; font-size: 12px; color: #1e5a2e; letter-spacing: 3px; position: relative; z-index: 1; }
+    .divider   { width: 60px; height: 0.5px; background: #0e2e0e; margin: 1.25rem auto; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .metric { background: #060d06; border: 0.5px solid #0e1e0e; border-radius: 8px; padding: 8px 6px; text-align: center; }
     .metric-label { font-size: 9px; color: #1e4a2a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-    .metric-val   { font-size: 13px; color: #00c048; letter-spacing: 1px; }
+    .metric-val { font-size: 13px; color: #00c048; letter-spacing: 1px; }
     .metric-val.warn   { color: #e87000; }
     .metric-val.danger { color: #e83030; }
-
-    .url-row {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 8px;
-    }
-    .url-row input {
-      flex: 1;
-      background: #060d06;
-      border: 0.5px solid #1a3a1a;
-      border-radius: 8px;
-      color: #00c048;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 12px;
-      padding: 8px 10px;
-      outline: none;
-      letter-spacing: 0.5px;
-      transition: border-color 0.2s;
-    }
+    .url-row { margin-top: 1.5rem; display: flex; gap: 8px; }
+    .url-row input { flex: 1; background: #060d06; border: 0.5px solid #1a3a1a; border-radius: 8px; color: #00c048; font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 8px 10px; outline: none; letter-spacing: 0.5px; transition: border-color 0.2s; }
     .url-row input:focus { border-color: #00e85a; }
-
-    .ping-btn {
-      background: transparent;
-      border: 0.5px solid #1a4a1a;
-      border-radius: 8px;
-      color: #00e85a;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      padding: 8px 16px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      transition: background 0.2s;
-    }
+    .ping-btn { background: transparent; border: 0.5px solid #1a4a1a; border-radius: 8px; color: #00e85a; font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 8px 16px; cursor: pointer; letter-spacing: 1px; white-space: nowrap; transition: background 0.2s; }
     .ping-btn:hover { background: #0a1e0a; }
-    .ping-btn.stop  { color: #e83030; border-color: #3a1a1a; }
+    .ping-btn.stop { color: #e83030; border-color: #3a1a1a; }
     .ping-btn.stop:hover { background: #1e0a0a; }
-
-    .log-strip {
-      margin-top: 10px;
-      border: 0.5px solid #0e1e0e;
-      border-radius: 8px;
-      padding: 8px 10px;
-      height: 70px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      justify-content: flex-end;
-    }
-    .log-line      { font-size: 10px; color: #1e5a2a; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .log-line.ok   { color: #00a038; }
-    .log-line.err  { color: #a03030; }
-
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1.25rem;
-      font-size: 10px;
-      color: #153a1a;
-      letter-spacing: 2px;
-    }
+    .log-strip { margin-top: 10px; border: 0.5px solid #0e1e0e; border-radius: 8px; padding: 8px 10px; height: 70px; overflow: hidden; display: flex; flex-direction: column; gap: 3px; justify-content: flex-end; }
+    .log-line     { font-size: 10px; color: #1e5a2a; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .log-line.ok  { color: #00a038; }
+    .log-line.err { color: #a03030; }
+    .footer-row { display: flex; justify-content: space-between; margin-top: 1.25rem; font-size: 10px; color: #153a1a; letter-spacing: 2px; }
   </style>
 </head>
 <body>
   <div class="watch-shell">
-
     <div class="brand-row">
       <span class="brand">Render Watch</span>
       <span class="status-pill" id="status-pill">
@@ -215,7 +55,6 @@
         <span id="status-text">IDLE</span>
       </span>
     </div>
-
     <div class="lcd-display">
       <div class="ghost" aria-hidden="true">
         <div class="ghost-main">88:88:88</div>
@@ -225,155 +64,24 @@
       <div class="time-ms"   id="time-ms">.000</div>
       <div class="date-row"  id="date-row">MON 01 JAN 2026</div>
     </div>
-
     <div class="divider"></div>
-
     <div class="metrics-grid">
-      <div class="metric">
-        <div class="metric-label">Monitor</div>
-        <div class="metric-val" id="m-uptime">--:--</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Srv uptime</div>
-        <div class="metric-val" id="m-srv-uptime">---s</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Latency</div>
-        <div class="metric-val" id="m-latency">--- ms</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Checks</div>
-        <div class="metric-val" id="m-checks">0</div>
-      </div>
+      <div class="metric"><div class="metric-label">Monitor</div><div class="metric-val" id="m-uptime">--:--</div></div>
+      <div class="metric"><div class="metric-label">Srv uptime</div><div class="metric-val" id="m-srv-uptime">---s</div></div>
+      <div class="metric"><div class="metric-label">Latency</div><div class="metric-val" id="m-latency">--- ms</div></div>
+      <div class="metric"><div class="metric-label">Checks</div><div class="metric-val" id="m-checks">0</div></div>
     </div>
-
     <div class="url-row">
-      <input id="url-input" type="text"
-        value="https://smart-blood-bank-management-system.onrender.com/api/health"
-        spellcheck="false" />
-      <button class="ping-btn" id="toggle-btn" onclick="togglePing()">START</button>
+      <input id="url-input" type="text" value="https://smart-blood-bank-management-system.onrender.com/api/health" spellcheck="false" />
+      <button class="ping-btn" id="toggle-btn">START</button>
     </div>
-
     <div class="log-strip" id="log-strip"></div>
-
     <div class="footer-row">
       <span>HEALTH MONITOR v1.0</span>
       <span>INTERVAL: 5s</span>
     </div>
   </div>
 
-  <script>
-    const DAYS   = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-    const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-
-    let pingInterval = null;
-    let running      = false;
-    let monitorStart = null;
-    let checks       = 0;
-    const logs       = [];
-
-    function pad(n, w = 2) { return String(n).padStart(w, '0'); }
-
-    // ── clock tick every 50 ms ──────────────────────────────────────────────
-    function tick() {
-      const now = new Date();
-      document.getElementById('time-main').textContent =
-        `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-      document.getElementById('time-ms').textContent =
-        `.${pad(now.getMilliseconds(), 3)}`;
-      document.getElementById('date-row').textContent =
-        `${DAYS[now.getDay()]} ${pad(now.getDate())} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
-
-      if (monitorStart) {
-        const e = Math.floor((Date.now() - monitorStart) / 1000);
-        document.getElementById('m-uptime').textContent =
-          `${pad(Math.floor(e / 60))}:${pad(e % 60)}`;
-      }
-    }
-    setInterval(tick, 50);
-    tick();
-
-    // ── log helper ─────────────────────────────────────────────────────────
-    function addLog(msg, type = '') {
-      logs.push({ msg, type });
-      if (logs.length > 5) logs.shift();
-      document.getElementById('log-strip').innerHTML =
-        logs.map(l => `<div class="log-line ${l.type}">${l.msg}</div>`).join('');
-    }
-
-    function setStatus(state, text) {
-      const pill = document.getElementById('status-pill');
-      pill.className = `status-pill ${state}`;
-      document.getElementById('status-text').textContent = text;
-    }
-
-    // ── ping ───────────────────────────────────────────────────────────────
-    async function doPing() {
-      const url = document.getElementById('url-input').value.trim();
-      if (!url) return;
-      const t0 = performance.now();
-      const ts = new Date().toLocaleTimeString('en-GB', { hour12: false });
-      try {
-        const res  = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
-        const data = await res.json().catch(() => ({}));
-        const ms   = Math.round(performance.now() - t0);
-        checks++;
-        document.getElementById('m-checks').textContent = checks;
-
-        const latEl = document.getElementById('m-latency');
-        latEl.textContent  = `${ms} ms`;
-        latEl.className    = ms < 400 ? 'metric-val' : ms < 1200 ? 'metric-val warn' : 'metric-val danger';
-
-        // server uptime from response body
-        if (data.uptime !== undefined) {
-          document.getElementById('m-srv-uptime').textContent = `${data.uptime}s`;
-        }
-
-        if (res.ok) {
-          setStatus('alive', 'ALIVE');
-          addLog(`[${ts}] ${res.status} OK — ${ms}ms`, 'ok');
-        } else {
-          setStatus('dead', `HTTP ${res.status}`);
-          addLog(`[${ts}] HTTP ${res.status} — ${ms}ms`, 'err');
-        }
-      } catch (e) {
-        checks++;
-        document.getElementById('m-checks').textContent = checks;
-        const label = e.name === 'TimeoutError' ? 'TIMEOUT' : 'OFFLINE';
-        setStatus('dead', label);
-        addLog(`[${ts}] ${label}: ${(e.message || 'no response').slice(0, 48)}`, 'err');
-        document.getElementById('m-latency').textContent  = '--- ms';
-        document.getElementById('m-latency').className    = 'metric-val danger';
-      }
-    }
-
-    // ── start / stop ───────────────────────────────────────────────────────
-    function togglePing() {
-      const btn = document.getElementById('toggle-btn');
-      if (!running) {
-        running      = true;
-        monitorStart = Date.now();
-        checks       = 0;
-        document.getElementById('m-checks').textContent = '0';
-        document.getElementById('url-input').disabled   = true;
-        btn.textContent  = 'STOP';
-        btn.className    = 'ping-btn stop';
-        setStatus('', 'PINGING');
-        doPing();
-        pingInterval = setInterval(doPing, 5000);
-      } else {
-        running      = false;
-        monitorStart = null;
-        clearInterval(pingInterval);
-        document.getElementById('url-input').disabled = false;
-        document.getElementById('m-uptime').textContent   = '--:--';
-        document.getElementById('m-srv-uptime').textContent = '---s';
-        btn.textContent = 'START';
-        btn.className   = 'ping-btn';
-        setStatus('', 'IDLE');
-        addLog('[--:--:--] monitoring stopped', '');
-      }
-    }
-  </script>
+  <script src="watch.js"></script>
 </body>
 </html>

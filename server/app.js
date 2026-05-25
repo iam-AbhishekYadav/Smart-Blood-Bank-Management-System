@@ -37,8 +37,17 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// serve the two static files with a relaxed CSP just for /status
 app.get("/status", (_req, res) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src *"
+  );
   res.sendFile(path.join(__dirname, "health-watch.html"));
+});
+
+app.get("/watch.js", (_req, res) => {
+  res.sendFile(path.join(__dirname, "watch.js"));
 });
 
 app.get("/api/health", (_req, res) => {
