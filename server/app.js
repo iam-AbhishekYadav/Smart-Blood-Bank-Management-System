@@ -10,6 +10,11 @@ import adminRoutes from "./routes/adminRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import publicRoutes from "./routes/publicRoutes.js";
 import dns from "dns";
+import { readFileSync } from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const _startTime = Date.now();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
@@ -18,7 +23,7 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL?.split(",") ?? ["http://localhost:5173"],
+    origin: process.env.CLIENT_URL?.split(",") ?? ["https://smartbloodbankmanagementsystem.vercel.app/"],
     credentials: true,
   })
 );
@@ -30,6 +35,10 @@ const authLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+});
+
+app.get("/status", (_req, res) => {
+  res.sendFile(path.join(__dirname, "health-watch.html"));
 });
 
 app.get("/api/health", (_req, res) => {
