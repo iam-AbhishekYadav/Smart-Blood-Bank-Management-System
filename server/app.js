@@ -10,6 +10,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import publicRoutes from "./routes/publicRoutes.js";
 import dns from "dns";
+const _startTime = Date.now();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const app = express();
@@ -31,13 +32,22 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.get("/api/health", (_req, res) => res.json({ ok: true }));
+app.get("/api/health", (_req, res) => {
+  res.json({
+    ok: true,
+    uptime: Math.floor((Date.now() - _startTime) / 1000),
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV ?? "development",
+  });
+});
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/recipients", recipientRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/public", publicRoutes);
+
+
 
 app.use((_req, res) => res.status(404).json({ message: "Route not found." }));
 
